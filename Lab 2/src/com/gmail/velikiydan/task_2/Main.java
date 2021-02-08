@@ -1,47 +1,41 @@
 package com.gmail.velikiydan.task_2;
 
-import java.util.Date;
-import java.util.Vector;
+import com.gmail.velikiydan.task_2.algorithms.fox.FoxAlgo;
+import com.gmail.velikiydan.task_2.algorithms.tape.TapeAlgo;
+
 
 public class Main {
+    private static final int MATRIX_SIZE = 1_000;
+
 
     public static void main(String[] args) {
+//        MultiplicationAlgorithm tapeAlgorithm = new TapeAlgo();
+        MultiplicationAlgorithm foxAlgorithm = new FoxAlgo();
 
-        int size = 2;
+//        useAlgo(tapeAlgorithm);
+        useAlgo(foxAlgorithm);
+    }
 
-        Vector<Vector<Integer>> a = new Vector<>();
-        for (int i = 0; i < size; i++) {
-            Vector<Integer> row = new Vector<>();
-            for (int j = 0; j < size; j++) {
-                row.add(10 * i + j);
-            }
-            a.add(row);
-        }
-        System.out.println("Created matrix 1:");
-        System.out.println(a);
+    private static void useAlgo(MultiplicationAlgorithm algo) {
+        System.out.printf("Executing %s algorithm\n", algo.getName());
+        System.out.printf("Creating matrices with size: %d\n", MATRIX_SIZE);
+        Result result = new Result(MATRIX_SIZE);
+        int[][] aMatrix = MatrixHelper.generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
+        int[][] bMatrix = MatrixHelper.generateRandomMatrix(MATRIX_SIZE, MATRIX_SIZE);
 
-        Vector<Vector<Integer>> b = new Vector<>();
-        for (int i = 0; i < size; i++) {
-            Vector<Integer> row = new Vector<>();
-            for (int j = 0; j < size; j++) {
-                row.add(j - i);
-            }
-            b.add(row);
-        }
-        System.out.println("Created matrix 2:");
-        System.out.println(b);
+//        MatrixHelper.printMatrix(aMatrix);
+//        System.out.println();
+//        MatrixHelper.printMatrix(bMatrix);
+//        System.out.println();
 
 
-        Date start = new Date();
-        Result r = new Result(a, b);
-//        r.sequentialMultiply();
-        r.foxMultiply();
-        Date end = new Date();
+        long startTime = System.currentTimeMillis();
+//        MatrixHelper.printMatrix(result.getMatrix());
+        algo.multiplyMatrix(aMatrix, bMatrix, result.getMatrix());
+        long endTime = System.currentTimeMillis();
+        long difference = endTime - startTime;
+        System.out.printf("Time taken: %dms\n", difference);
 
-
-        System.out.println("Result:");
-        System.out.println(r.getMatrix());
-        System.out.printf("Time taken: %dms", end.getTime() - start.getTime());
-
+//        MatrixHelper.printMatrix(result.getMatrix());
     }
 }

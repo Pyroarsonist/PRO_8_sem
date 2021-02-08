@@ -1,4 +1,4 @@
-package com.gmail.velikiydan.task_1;
+package com.gmail.velikiydan.task_3;
 
 import java.util.concurrent.ThreadLocalRandom;
 
