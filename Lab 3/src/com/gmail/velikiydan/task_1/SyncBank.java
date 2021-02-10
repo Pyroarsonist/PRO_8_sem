@@ -3,23 +3,19 @@ package com.gmail.velikiydan.task_1;
 import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Bank {
+public class SyncBank implements IBank {
     public static final int NTEST = 10000;
     private final int[] accounts;
     private long ntransacts = 0;
 
-    // added lock
-    private final ReentrantLock lock = new ReentrantLock();
 
-    public Bank(int n, int initialBalance) {
+    public SyncBank(int n, int initialBalance) {
         accounts = new int[n];
         Arrays.fill(accounts, initialBalance);
         ntransacts = 0;
     }
 
-    public void transfer(int from, int to, int amount)
-            throws InterruptedException {
-        lock.lock();
+    public synchronized void transfer(int from, int to, int amount) {
 
         accounts[from] -= amount;
         accounts[to] += amount;
@@ -27,7 +23,6 @@ public class Bank {
         if (ntransacts % NTEST == 0)
             test();
 
-        lock.unlock();
     }
 
     public void test() {

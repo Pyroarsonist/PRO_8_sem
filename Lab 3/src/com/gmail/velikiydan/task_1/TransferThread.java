@@ -1,12 +1,12 @@
 package com.gmail.velikiydan.task_1;
 
 public class TransferThread extends Thread {
-    private final Bank bank;
+    private final IBank bank;
     private final int fromAccount;
     private final int maxAmount;
     private static final int REPS = 1000;
 
-    public TransferThread(Bank b, int from, int max) {
+    public TransferThread(IBank b, int from, int max) {
         bank = b;
         fromAccount = from;
         maxAmount = max;

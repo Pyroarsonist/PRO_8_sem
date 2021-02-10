@@ -2,6 +2,7 @@ package com.gmail.velikiydan.task_3;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -13,12 +14,14 @@ public class Journal {
     private final ArrayList<HashMap<Integer, Integer>> weeks;
     private final ReentrantLock lock = new ReentrantLock();
 
-    public Journal(String discipline, int weeksCount, int studentsCount) {
+    public Journal(String discipline, int weeksCount, int groupsCount, int studentsCount) {
         this.discipline = discipline;
 
         this.students = new ArrayList<>();
-        for (int i = 1; i <= studentsCount; i++) {
-            this.students.add(new Student(i));
+        for (int groupNum = 1; groupNum <= groupsCount; groupNum++) {
+            for (int studentI = 1; studentI <= studentsCount; studentI++) {
+                this.students.add(new Student(groupNum));
+            }
         }
 
         this.weeks = new ArrayList<>();
@@ -30,41 +33,53 @@ public class Journal {
     public void print() {
         System.out.printf("Journal of %s\n", discipline);
         for (int i = 0; i < weeks.size(); i++) {
-            var week = weeks.get(i);
-            System.out.printf("Week %d", i + 1);
+            HashMap<Integer, Integer> marks = weeks.get(i);
+            System.out.printf("Week %d\n", i + 1);
+            for (Map.Entry<Integer, Integer> set :
+                    marks.entrySet()) {
+                Integer id = set.getKey();
+                Integer mark = set.getValue();
+                System.out.printf("id %3d: mark - %3d,\t", id, mark);
+            }
+            System.out.println();
         }
     }
 
 
     public boolean isFull() {
-        int marks = 0;
+        int marksCount = 0;
         for (HashMap<Integer, Integer> week :
                 this.weeks) {
-            marks += week.size();
+            marksCount += week.size();
         }
-        return marks == students.size();
+
+        return marksCount == students.size() * weeks.size();
     }
 
     public void setNextMark() {
-        lock.lock();
+        try {
+            lock.lock();
 
-        weekLoop:
-        for (HashMap<Integer, Integer> week :
-                this.weeks) {
-            if (week.size() == students.size()) continue;
+            weekLoop:
+            for (HashMap<Integer, Integer> marks :
+                    this.weeks) {
 
-            for (Student s :
-                    this.students) {
-                if (week.containsKey(s.getId())) continue;
+                if (marks.size() == students.size()) continue;
 
-                week.put(s.getId(), generateMark());
-                break weekLoop;
+                for (Student s :
+                        this.students) {
+                    if (marks.containsKey(s.getId())) continue;
+
+                    marks.put(s.getId(), generateMark());
+                    break weekLoop;
+
+                }
 
             }
-
+        } finally {
+            lock.unlock();
         }
 
-        lock.unlock();
     }
 
     private Integer generateMark() {
