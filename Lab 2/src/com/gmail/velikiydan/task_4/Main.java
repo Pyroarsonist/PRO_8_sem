@@ -3,7 +3,11 @@ package com.gmail.velikiydan.task_4;
 
 import com.gmail.velikiydan.task_4.algorithms.fox.FoxAlgo;
 import com.gmail.velikiydan.task_4.algorithms.tape.TapeAlgo;
+import com.google.gson.Gson;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -23,6 +27,7 @@ public class Main {
             Result result = new Result(MATRIX_SIZE);
             useAlgo(tapeAlgorithm, poolSize, result);
             useAlgo(foxAlgorithm, poolSize, result);
+            System.out.println(poolSize);
 
             map.put(poolSize, result);
         }
@@ -42,6 +47,18 @@ public class Main {
         for (Result result : map.values()) {
             System.out.printf("%4d ", result.getFoxDuration());
         }
+
+        ArrayList<MatrixProcDuration> mds = MatrixProcDuration.getDurations(map);
+
+        String json = new Gson().toJson(mds);
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("proc_data.json"), StandardCharsets.UTF_8))) {
+            writer.write(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("\nfinished");
 
 
     }

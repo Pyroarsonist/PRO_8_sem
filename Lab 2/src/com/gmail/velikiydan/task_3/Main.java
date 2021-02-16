@@ -2,15 +2,18 @@ package com.gmail.velikiydan.task_3;
 
 import com.gmail.velikiydan.task_3.algorithms.fox.FoxAlgo;
 import com.gmail.velikiydan.task_3.algorithms.tape.TapeAlgo;
+import com.google.gson.Gson;
 
-import java.util.HashMap;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
 
 public class Main {
     private static final int MATRIX_SIZE = 2000;
-    private static final int MATRIX_SIZE_STEP = 100;
+    private static final int MATRIX_SIZE_STEP = 5;
 
 
     public static void main(String[] args) {
@@ -19,6 +22,7 @@ public class Main {
 
         Map<Integer, Result> map = new TreeMap<>();
         for (int matrixSize = 2; matrixSize <= MATRIX_SIZE; matrixSize += MATRIX_SIZE_STEP) {
+//            System.out.println(matrixSize);
             Result result = new Result(matrixSize);
             useAlgo(tapeAlgorithm, matrixSize, result);
             useAlgo(foxAlgorithm, matrixSize, result);
@@ -41,6 +45,18 @@ public class Main {
         for (Result result : map.values()) {
             System.out.printf("%4d ", result.getFoxDuration());
         }
+
+        ArrayList<MatrixDuration> mds = MatrixDuration.getDurations(map);
+
+        String json = new Gson().toJson(mds);
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("data.json"), StandardCharsets.UTF_8))) {
+            writer.write(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("\nfinished");
 
 
     }
