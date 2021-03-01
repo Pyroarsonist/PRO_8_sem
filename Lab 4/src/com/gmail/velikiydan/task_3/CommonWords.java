@@ -1,4 +1,4 @@
-package com.gmail.velikiydan.task_4;
+package com.gmail.velikiydan.task_3;
 
 import java.util.ArrayList;
 import java.util.Arrays;
